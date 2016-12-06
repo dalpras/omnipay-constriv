@@ -6,7 +6,7 @@ use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 
 /**
- * Constriv Complete Purchase Response
+ * Constriv Purchase Response
  *
  * @author DalPraS
  */
@@ -20,11 +20,12 @@ class PurchaseResponse extends AbstractResponse implements \Omnipay\Common\Messa
             $this->data = [
                 'status'     => 'OK',
                 'paymentId'  => $matches[1],
-                'paymentUrl' => $matches[2],
+                'paymentUrl' => $matches[2]
             ];
         } else {
             $this->data = [
-                'status'     => 'KO',
+                'status'  => 'KO',
+                'message' => $data
             ];
         }
     }
@@ -53,25 +54,36 @@ class PurchaseResponse extends AbstractResponse implements \Omnipay\Common\Messa
      * @return string
      */    
     public function getRedirectUrl() {
-        $result = $this->data['paymentUrl'] . '?PaymentID=' . $this->data['paymentId'];
-        return $result;
+        if ($this->isSuccessful()) {
+            return $this->data['paymentUrl'] . '?PaymentID=' . $this->data['paymentId'];
+        }
+        return null;
+    }
+
+    /**
+     * Gateway Reference
+     *
+     * @return null|string A reference provided by the gateway to represent this transaction
+     */    
+    public function getTransactionReference() {
+        return $this->isSuccessful() ? $this->data['paymentId'] : null;
+    }
+
+    /**
+     * Does the response require a redirect?
+     *
+     * @return boolean
+     */
+    public function isRedirect() {
+        return true;
     }
 
     public function isSuccessful() {
         return isset($this->data['status']) && $this->data['status'] == 'OK';
     }
 
-    public function isCancelled() {
-        return isset($this->data['status']) && $this->data['status'] == 'KO';
-    }
-
-    public function getTransactionReference() {
-        return isset($this->data['paymentId']) ? $this->data['paymentId'] : null;
-    }
-
     public function getMessage() {
-        return NULL;
-//        return isset($this->data['rawAuthMessage']) ? $this->data['rawAuthMessage'] : null;
+        return isset($this->data['message']) ? $this->data['message'] : null;
     }
 
 }

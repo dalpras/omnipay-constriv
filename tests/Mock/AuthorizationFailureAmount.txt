@@ -1,0 +1,17 @@
+POST https://ipg.constriv.com/IPGWeb/servlet/PaymentInitHTTPServlet?id=57346080&password=ks2v0R3ZNZ&action=1&amt=116%2C11&currencycode=978&responseURL=http%3A%2F%2Flocalhost%2Fit%2Fit%2Fpay%2Findex%2Fresponse&errorURL=http%3A%2F%2Flocalhost%2Fit%2Fit%2Fpay%2Findex%2Ferror&langid=ITA&trackid=846&udf2=f72f419ddcdfb5d7e2068211791f6c50&udf3=EMAILADDR%3Arovizzimirco1%40gmail.com
+Content-Type: text/plain
+
+ -- response --
+200 OK
+Date:  Tue, 06 Dec 2016 09:36:41 GMT
+X-Powered-By:  Servlet/3.0
+Cache-Control:  no-cache, no-store, must-revalidate
+Pragma:  no-cache
+Expires:  Thu, 01 Jan 1970 00:00:00 GMT
+Content-Length:  30
+Keep-Alive:  timeout=10, max=100
+Connection:  Keep-Alive
+Content-Type:  text/html
+Content-Language:  en-US
+
+!ERROR!-PY20002-Invalid amount

@@ -49,57 +49,83 @@ class Gateway extends AbstractGateway {
 
     public function getDefaultParameters() {
         return [
-            'id'           => '', // $config->pay->merchantId, // username
-            'password'     => '', // $config->pay->merchantPassword,
-//            'action'       => self::ACTION_PURCHASE,
-//            'amt'          => sprintf("%0.2F", $order->getAmount()),
-//            'currencycode' => self::CURRENCY_EURO,
-//            'langid'       => self::LANG_ITA,
-//            'responseURL'  => $responseUrl,
-//            'errorURL'     => $errorURL,
-//            'trackid'      => $order->getId(),
-//            'udf2'         => $order->getToken(),
-//            'udf3'         => 'EMAILADDR:' . $order->getProfile()->getEmail(),
-//            'udf5'         => 'HPP_TIMEOUT=20',
-            'testMode' => false,
-        ];        
-    }
-
-    public function getId() {
-        return $this->getParameter('id');
-    }
-
-    public function setId($value) {
-        return $this->setParameter('id', $value);
-    }
-
-    public function getPassword() {
-        return $this->getParameter('password');
-    }
-
-    public function setPassword($value) {
-        return $this->setParameter('password', $value);
+            'merchantId'       => '',
+            'merchantPassword' => '',
+            'testMode'         => false,
+        ];
     }
 
     /**
-     * Create an authorize request.
+     * Get the Merchant ID
      *
-     * @param array $parameters
+     * This is the merchant number 
      * 
-     * @return \Omnipay\Constriv\Message\CompletePurchaseRequest
+     * @return string merchant id
      */
-    public function authorize(array $parameters = array()) {
-        return $this->createRequest('\Omnipay\Constriv\Message\AuthorizeRequest', $parameters);
+    public function getMerchantId()
+    {
+        return $this->getParameter('merchantId');
+    }
+
+    /**
+     * Set the Merchant ID
+     *
+     * This is the merchant number 
+     *
+     * @param  string $value merchant id
+     * @return self
+     */
+    public function setMerchantId($value)
+    {
+        return $this->setParameter('merchantId', $value);
+    }
+
+    /**
+     * Get the Merchant Password
+     *
+     * Password provided by Constriv.
+     *
+     * @return string merchant password
+     */
+    public function getMerchantPassword()
+    {
+        return $this->getParameter('merchantPassword');
+    }
+
+    /**
+     * Set the Merchant Password
+     *
+     * Password provided by Constriv.
+     *
+     * @param  string $value merchant password
+     * @return self
+     */
+    public function setMerchantPassword($value)
+    {
+        return $this->setParameter('merchantPassword', $value);
     }
 
     /**
      * Create a purchase request.
      *
      * @param array $parameters
-     * @return \Omnipay\Dummy\Message\AuthorizeRequest
+     * 
+     * @return \Omnipay\Constriv\Message\PurchaseRequest
      */
     public function purchase(array $parameters = array()) {
         return $this->createRequest('\Omnipay\Constriv\Message\PurchaseRequest', $parameters);
     }
+
+    /**
+     * Handle return from off-site gateways after purchase
+     * 
+     * @param  array $parameters
+     * @return \Omnipay\Constriv\Message\CompletePurchaseRequest
+     */
+    public function completePurchase(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Constriv\Message\CompletePurchaseRequest', $parameters);
+    }
+    
 
 }
