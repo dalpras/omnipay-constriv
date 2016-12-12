@@ -2,7 +2,6 @@
 
 namespace Omnipay\Constriv\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 
 /**
@@ -10,7 +9,7 @@ use Omnipay\Common\Message\RequestInterface;
  *
  * @author DalPraS
  */
-class PurchaseResponse extends AbstractResponse implements \Omnipay\Common\Message\RedirectResponseInterface {
+class PurchaseResponse extends \Omnipay\Common\Message\AbstractResponse implements \Omnipay\Common\Message\RedirectResponseInterface {
 
     public function __construct(RequestInterface $request, $data) {
         $this->request = $request;
