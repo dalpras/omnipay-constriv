@@ -84,23 +84,5 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest {
         return $this->setParameter('merchantPassword', $value);
     }
 
-    /**
-     * Get the transaction Token.
-     * 
-     * @return string
-     */
-    public function getToken() {
-        return $this->getParameter('token');
-    }
-
-    /**
-     * Set the transaction Token.
-     * 
-     * @return string
-     */
-    public function setToken($value) {
-        return $this->setParameter('token', $value);
-    }    
-    
     
 }

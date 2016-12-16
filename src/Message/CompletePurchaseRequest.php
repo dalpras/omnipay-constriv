@@ -10,6 +10,13 @@ namespace Omnipay\Constriv\Message;
 class CompletePurchaseRequest extends AbstractRequest {
     
     /**
+     * PaymentId initiated by gateway and returned with a post from purchase.
+     * 
+     * @var string
+     */
+    private $paymentId;
+    
+    /**
      * Get the data for this request.
      *
      * @throws InvalidRequestException
@@ -17,66 +24,79 @@ class CompletePurchaseRequest extends AbstractRequest {
      */
     public function getData()
     {
-        $this->validate('merchantId', 'merchantPassword', 'token', 'returnUrl');
-        $paymentId = $this->httpRequest->request->get('paymentid');
+        $request = $this->httpRequest->request;
+        
+        $this->validate('merchantId', 'merchantPassword', /*'token',*/ 'returnUrl');
         
         // Error from payment gateway
-        if (($error = $this->httpRequest->request->get('Error'))) {
+        if (($error = $request->get('Error'))) {
             return [
-                'paymentId' => $paymentId,
+                'paymentId' => $this->getPaymentId(),
                 'code'      => $error,
-                'message'   => $this->httpRequest->request->get('ErrorText')
+                'message'   => $request->get('ErrorText'),
+                'returnUrl' => $this->getReturnUrl()
             ];
         }
         
         // token to match
-        $token = $this->httpRequest->request->get('udf2');
-        
-        // invalid match
-        if ( ($token !== null) && ($token != $this->getToken()) ) {
-            return [
-                'paymentId' => $paymentId,
-                'code'      => 'xxx',
-                'message'   => 'Initialization token not matching!'
-            ];
-        }
+//        $token = $request->get('udf2');
+//        
+//        // invalid match
+//        if ( ($token !== null) && ($token != $this->getToken()) ) {
+//            return [
+//                'paymentId' => $paymentId,
+//                'code'      => 'token',
+//                'message'   => 'Initialization token not matching!'
+//            ];
+//        }
         
         // transaction reference created by payment gateway
-        $transactionReference = $this->httpRequest->request->get('tranid');
+        $transactionReference = $request->get('tranid');
         
         // created by merchant during authorization 
-        $transactionId = $this->httpRequest->request->get('trackid'); 
+        $transactionId = $request->get('trackid'); 
         
         // card type used by customer
-        $cardtype = $this->httpRequest->request->get('cardtype'); 
+        $cardtype = $request->get('cardtype'); 
         
         // transaction result from payment gateway
-        $result = $this->httpRequest->request->get('result'); 
+        $result = $request->get('result'); 
+        
+        // the token setted during initialization is returned for additional check (optional)
+        $token = $request->get('udf2', 'invalid-token');
         
         $data = [
-            'paymentId'            => $paymentId,
+            'paymentId'            => $this->getPaymentId(),
+            'token'                => $token,
             'transactionReference' => $transactionReference,
             'transactionId'        => $transactionId,
             'cardtype'             => $cardtype,
-            'result'               => $result
+            'result'               => $result,
+            'returnUrl'            => $this->getReturnUrl()
         ];
 
         return $data;
     }    
     
     /**
-     * Send the the destination to which redirect customer to payment gateway
+     * Id of the payment initiated by the payment gateway created during initialization.
+     * The paymentId is returned by gateway when invoking completePurchase and is needed to 
+     * fullfill the returnUrl before getData is called.
+     */
+    public function getPaymentId() {
+        if ($this->paymentId === null) {
+            $this->paymentId = $this->httpRequest->request->get('paymentid');
+        } 
+        return $this->paymentId;
+    }    
+    
+    /**
+     * Send the the destination where to redirect customer to payment gateway
      *
      * @param  mixed $data The data to send
      */
-    public function sendData($data)
-    {
-        // if there are not errors display redirect message for payment gateway
-        if ( isset($data['code']) && $data['code'] !== null ) {
-            echo "REDIRECT=" . $this->getReturnUrl();    
-            die();
-        } 
+    public function sendData($data) { 
         return new CompletePurchaseResponse($this, $data);
-    }    
-    
+    }
+
 }

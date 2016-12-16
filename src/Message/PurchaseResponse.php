@@ -17,13 +17,11 @@ class PurchaseResponse extends \Omnipay\Common\Message\AbstractResponse implemen
         $match = preg_match('~^([\w]{1,20}):(.+)$~', $data, $matches);
         if ($match) {
             $this->data = [
-                'status'     => 'OK',
                 'paymentId'  => $matches[1],
                 'paymentUrl' => $matches[2]
             ];
         } else {
             $this->data = [
-                'status'  => 'KO',
                 'message' => $data
             ];
         }
@@ -78,7 +76,7 @@ class PurchaseResponse extends \Omnipay\Common\Message\AbstractResponse implemen
     }
 
     public function isSuccessful() {
-        return isset($this->data['status']) && $this->data['status'] == 'OK';
+        return isset($this->data['paymentId']) && $this->data['paymentId'] != null;
     }
 
     public function getMessage() {
