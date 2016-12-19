@@ -40,6 +40,11 @@ class CompletePurchaseResponse extends \Omnipay\Common\Message\AbstractResponse 
         return $this->isSuccessful() ? $this->data['transactionId'] : null;
     }
 
+    /**
+     * Check if order has been captured.
+     * 
+     * @return boolean
+     */
     public function isSuccessful() {
         return isset($this->data['result']) && $this->data['result'] == 'CAPTURED';
     }
@@ -90,4 +95,22 @@ class CompletePurchaseResponse extends \Omnipay\Common\Message\AbstractResponse 
         die();
     }
     
+    /**
+     * Response Message in case of unsuccesful result
+     *
+     * @return null|string A response message from the payment gateway
+     */
+    public function getMessage() {
+        return $this->isSuccessful() ? null : $this->data['message'];
+    }
+
+    /**
+     * Response code in case of unsuccesful result
+     *
+     * @return null|string A response code from the payment gateway
+     */
+    public function getCode() {
+        return $this->isSuccessful() ? null : $this->data['code'];
+    }
+
 }

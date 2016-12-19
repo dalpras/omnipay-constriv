@@ -40,7 +40,8 @@ class PurchaseRequest extends AbstractRequest {
     public function sendData($data) {
         // $httpRequest = $this->httpClient->post($this->getEndpoint(), null, http_build_query($data, '', '&'));
         $httpRequest = $this->httpClient->post($this->getEndpoint(), null, $data);
-        $httpRequest->getCurlOptions()->set(CURLOPT_SSLVERSION, 6); // CURL_SSLVERSION_TLSv1_2 for libcurl < 7.35
+        // CURL_SSLVERSION_TLSv1_2 for libcurl < 7.35
+        // $httpRequest->getCurlOptions()->set(CURLOPT_SSLVERSION, 6); 
         $httpRequest->getCurlOptions()->set(CURLOPT_POST, true); 
         $httpRequest->getCurlOptions()->set(CURLOPT_SSL_VERIFYPEER, false); 
         $httpRequest->getCurlOptions()->set(CURLOPT_RETURNTRANSFER, true); 

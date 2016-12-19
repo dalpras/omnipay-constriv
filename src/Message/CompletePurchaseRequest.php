@@ -82,6 +82,10 @@ class CompletePurchaseRequest extends AbstractRequest {
      * Id of the payment initiated by the payment gateway created during initialization.
      * The paymentId is returned by gateway when invoking completePurchase and is needed to 
      * fullfill the returnUrl before getData is called.
+     * 
+     * The id of the payment is always returned during completePurchase from the gateway, so
+     * it's possible to use this value for a complete stateless payment workflow, because it doesnt rely
+     * on user sessions.
      */
     public function getPaymentId() {
         if ($this->paymentId === null) {
