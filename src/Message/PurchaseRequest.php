@@ -21,11 +21,12 @@ class PurchaseRequest extends AbstractRequest {
             'errorURL'     => $this->getCancelUrl(),
             'langid'       => self::LANG_ITA,
             'trackid'      => $this->getTransactionId(),
-            'udf2'         => $this->getToken()
+//            'udf2'         => $this->getToken()
         ];
-        if ($this->getCard()) {
-            $data['udf3'] = 'EMAILADDR:' . $this->getCard()->getEmail();
-        } 
+        $card = $this->getCard();
+        if ($card) {
+            $data['udf3'] = 'EMAILADDR:' . $card->getEmail();
+        }
         $data['udf5'] = 'HPP_TIMEOUT=20';
         return $data;
     }
@@ -61,4 +62,27 @@ class PurchaseRequest extends AbstractRequest {
         return $this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint;
     }
     
+    /**
+     * Get the Email
+     *
+     * This is the customer email
+     * 
+     * @return string merchant id
+     */
+    public function getEmail() {
+        return $this->getParameter('email');
+    }
+
+    /**
+     * Set the Email
+     *
+     * This is the customer email
+     *
+     * @param  string $value email
+     * @return self
+     */
+    public function setEmail($value) {
+        return $this->setParameter('email', $value);
+    }
+
 }

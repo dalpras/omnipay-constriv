@@ -4,50 +4,8 @@ namespace Omnipay\Constriv;
 
 use Omnipay\Common\AbstractGateway;
 
-/**
- * 
- * 
- * 
- */
 class Gateway extends AbstractGateway {
 
-    /**
-     * Il sistema bancario ha rifiutato la transazione a causa di timeout o dati di invio errati.
-     */
-//    const STATUS_BANK_ERROR = -2;
-//    const STATUS_BANK_ERROR_DESC = "Rifiutato";
-
-    /**
-     * Comunicazione avvenuta dal sistema bancario, ma ordine non corrispondente sul sistema Vimar.
-     */
-//    const STATUS_INTERNAL_ERROR = -1;
-//    const STATUS_INTERNAL_ERROR_DESC = "Errore";
-
-    /**
-     * Ordine iniziato e inviato al PaymentGateway
-     */
-//    const STATUS_ON_GOING = 0;
-//    const STATUS_ON_GOING_DESC = "Iniziato";
-
-    /**
-     * Ordine e transazione completati correttamente.
-     * La somma è stata addebitata correttamente nella carta di credito del'utente.
-     */
-//    const STATUS_SUCCEDED = 1;
-//    const STATUS_SUCCEDED_DESC = "Completato";
-
-    /**
-     * Ordine inviato correttamente al sistema bancario, ma transazione non autorizzata.
-     */
-//    const STATUS_BLOCKED = 2;
-//    const STATUS_BLOCKED_DESC = "Non autorizzato";
-
-//    const ACTION_PURCHASE = 1;
-//    const ACTION_AUTHORIZATION = 4;
-
-//    const CURRENCY_EURO = 978;
-//    const LANG_ITA = 'ITA';    
-    
     public function getName() {
         return 'Constriv';
     }

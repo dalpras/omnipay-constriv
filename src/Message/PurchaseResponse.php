@@ -2,8 +2,6 @@
 
 namespace Omnipay\Constriv\Message;
 
-use Omnipay\Common\Message\RequestInterface;
-
 /**
  * Constriv Purchase Response
  *
@@ -11,30 +9,11 @@ use Omnipay\Common\Message\RequestInterface;
  */
 class PurchaseResponse extends \Omnipay\Common\Message\AbstractResponse implements \Omnipay\Common\Message\RedirectResponseInterface {
 
-    public function __construct(RequestInterface $request, $data) {
-        $this->request = $request;
-        // come da indicazioni del manuale il PG ritorna l'id del pagamento + ":" + url del pagamento
-        $match = preg_match('~^([\w]{1,20}):(.+)$~', $data, $matches);
-        if ($match) {
-            $this->data = [
-                'paymentId'  => $matches[1],
-                'paymentUrl' => $matches[2]
-            ];
-        } else {
-            $this->data = [
-                'message' => $data
-            ];
-        }
-    }
-
     /**
-     * Gets the redirect form data array, if the redirect method is POST.
-     *
-     * @return array
-     */    
-    public function getRedirectData() {
-        return [];
-    }
+     * Regular expression that matches the body returned by payment gateway.
+     * If pattern match the response is successfull, otherwise is not valid.
+     */
+    const regexMatch = '~^([\w]{1,20}):(.+)$~';
 
     /**
      * Get the required redirect method (either GET or POST).
@@ -51,10 +30,8 @@ class PurchaseResponse extends \Omnipay\Common\Message\AbstractResponse implemen
      * @return string
      */    
     public function getRedirectUrl() {
-        if ($this->isSuccessful()) {
-            return $this->data['paymentUrl'] . '?PaymentID=' . $this->data['paymentId'];
-        }
-        return null;
+        $matches = [];
+        return preg_match(self::regexMatch, $this->data, $matches) ? $matches[2] . '?PaymentID=' . $matches[1] : null;
     }
 
     /**
@@ -63,24 +40,38 @@ class PurchaseResponse extends \Omnipay\Common\Message\AbstractResponse implemen
      * @return null|string A reference provided by the gateway to represent this transaction
      */    
     public function getTransactionReference() {
-        return $this->isSuccessful() ? $this->data['paymentId'] : null;
+        $matches = [];
+        return preg_match(self::regexMatch, $this->data, $matches) ? $matches[1] : null;
+    }
+    
+    /**
+     * Gets the redirect form data array, if the redirect method is POST.
+     *
+     * @return array
+     */    
+    public function getRedirectData() {
+        return [];
     }
 
+    /**
+     * Is the response successful?
+     *
+     * @return boolean
+     */    
+    public function isSuccessful() {
+        return preg_match(self::regexMatch, $this->data);
+    }
+    
     /**
      * Does the response require a redirect?
      *
      * @return boolean
      */
     public function isRedirect() {
-        return true;
-    }
-
-    public function isSuccessful() {
-        return isset($this->data['paymentId']) && $this->data['paymentId'] != null;
+        return $this->isSuccessful();
     }
 
     public function getMessage() {
-        return isset($this->data['message']) ? $this->data['message'] : null;
+        return preg_match(self::regexMatch, $this->data) ? null : $this->data;
     }
-
 }

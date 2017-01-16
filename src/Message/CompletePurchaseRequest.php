@@ -10,13 +10,6 @@ namespace Omnipay\Constriv\Message;
 class CompletePurchaseRequest extends AbstractRequest {
     
     /**
-     * PaymentId initiated by gateway and returned with a post from purchase.
-     * 
-     * @var string
-     */
-    private $paymentId;
-    
-    /**
      * Get the data for this request.
      *
      * @throws InvalidRequestException
@@ -24,20 +17,24 @@ class CompletePurchaseRequest extends AbstractRequest {
      */
     public function getData()
     {
+        $this->validate('merchantId', 'merchantPassword', 'returnUrl');
         $request = $this->httpRequest->request;
-        
-        $this->validate('merchantId', 'merchantPassword', /*'token',*/ 'returnUrl');
         
         // Error from payment gateway
         if (($error = $request->get('Error'))) {
-            return [
-                'paymentId' => $this->getPaymentId(),
-                'code'      => $error,
-                'message'   => $request->get('ErrorText'),
-                'returnUrl' => $this->getReturnUrl()
+            $data['code']      = $error;
+            $data['message']   = $request->get('ErrorText');
+            $data['returnUrl'] = $this->getReturnUrl();
+        } else {
+            $data = [
+//                'token'                => $request->get('udf2', 'invalid-token'), // the token setted during initialization is returned for additional check (optional)
+                'transactionReference' => $request->get('tranid'),   // transaction reference created by payment gateway
+                'transactionId'        => $request->get('trackid'),  // id created by merchant during authorization 
+                'cardtype'             => $request->get('cardtype'), // card type used by customer
+                'result'               => $request->get('result'),   // transaction result from payment gateway
+                'returnUrl'            => $this->getReturnUrl()
             ];
         }
-        
         // token to match
 //        $token = $request->get('udf2');
 //        
@@ -50,31 +47,8 @@ class CompletePurchaseRequest extends AbstractRequest {
 //            ];
 //        }
         
-        // transaction reference created by payment gateway
-        $transactionReference = $request->get('tranid');
-        
-        // created by merchant during authorization 
-        $transactionId = $request->get('trackid'); 
-        
-        // card type used by customer
-        $cardtype = $request->get('cardtype'); 
-        
-        // transaction result from payment gateway
-        $result = $request->get('result'); 
-        
-        // the token setted during initialization is returned for additional check (optional)
-        $token = $request->get('udf2', 'invalid-token');
-        
-        $data = [
-            'paymentId'            => $this->getPaymentId(),
-            'token'                => $token,
-            'transactionReference' => $transactionReference,
-            'transactionId'        => $transactionId,
-            'cardtype'             => $cardtype,
-            'result'               => $result,
-            'returnUrl'            => $this->getReturnUrl()
-        ];
-
+        // The PaymentId is initiated by gateway and returned with a post from purchase.
+        $data['paymentId'] = $this->getPaymentId();
         return $data;
     }    
     
@@ -88,12 +62,14 @@ class CompletePurchaseRequest extends AbstractRequest {
      * on user sessions.
      */
     public function getPaymentId() {
-        if ($this->paymentId === null) {
-            $this->paymentId = $this->httpRequest->request->get('paymentid');
-        } 
-        return $this->paymentId;
-    }    
-    
+        return $this->httpRequest->request->get('paymentid');
+    }
+
+//
+//    public function setPaymentId($value) {
+//        return $this->setParameter('paymentId', $value);
+//    }
+
     /**
      * Send the the destination where to redirect customer to payment gateway
      *
