@@ -8,7 +8,7 @@ namespace Omnipay\Constriv\Message;
  * @author DalPraS
  */
 class PurchaseRequest extends AbstractRequest {
-    
+
     public function getData() {
         $this->validate('amount', 'currency', 'cancelUrl', 'returnUrl');
         $data = [
@@ -30,24 +30,20 @@ class PurchaseRequest extends AbstractRequest {
         $data['udf5'] = 'HPP_TIMEOUT=20';
         return $data;
     }
-    
+
     /**
      * Send POST to payment gateway
-     * 
-     * @param array $data 
+     *
+     * @param array $data
      *          Post fields data
      * @return PurchaseResponse
      */
     public function sendData($data) {
-        // $httpRequest = $this->httpClient->post($this->getEndpoint(), null, http_build_query($data, '', '&'));
-        $httpRequest = $this->httpClient->post($this->getEndpoint(), null, $data);
-        // CURL_SSLVERSION_TLSv1_2 for libcurl < 7.35
-        // $httpRequest->getCurlOptions()->set(CURLOPT_SSLVERSION, 6); 
-        $httpRequest->getCurlOptions()->set(CURLOPT_POST, true); 
-        $httpRequest->getCurlOptions()->set(CURLOPT_SSL_VERIFYPEER, false); 
-        $httpRequest->getCurlOptions()->set(CURLOPT_RETURNTRANSFER, true); 
-        $httpResponse = $httpRequest->send();
-        return $this->createResponse($httpResponse->getBody());
+        /* @var $httpClient \Omnipay\Common\Http\Client */
+        $httpClient = $this->httpClient;
+        $httpResponse = $httpClient->request('POST', $this->getEndpoint(), [], http_build_query($data));
+        $body = $httpResponse->getBody();
+        return $this->createResponse($body);
     }
 
     /**
@@ -61,12 +57,12 @@ class PurchaseRequest extends AbstractRequest {
     public function getEndpoint() {
         return $this->getTestMode() ? $this->testEndpoint : $this->liveEndpoint;
     }
-    
+
     /**
      * Get the Email
      *
      * This is the customer email
-     * 
+     *
      * @return string merchant id
      */
     public function getEmail() {
