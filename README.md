@@ -13,7 +13,7 @@ Omnipay is a payment processing library for PHP. It has been designed based on
 ideas from [Active Merchant](http://activemerchant.org/), plus experience implementing
 dozens of gateways for [CI Merchant]. It has a clear and consistent API,
 is fully unit tested, and even comes with an example application to get you started.
-This library is able compatible with omnipay payment v3.
+This library is now compatible with omnipay payment v3.
 
 ## Install
 
