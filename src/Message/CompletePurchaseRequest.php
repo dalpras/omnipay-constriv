@@ -2,6 +2,8 @@
 
 namespace Omnipay\Constriv\Message;
 
+use Omnipay\Common\Exception\InvalidRequestException;
+
 /**
  * Description of CompleteAuthorizeRequest
  *
@@ -27,7 +29,6 @@ class CompletePurchaseRequest extends AbstractRequest {
             $data['returnUrl'] = $this->getReturnUrl();
         } else {
             $data = [
-//                'token'                => $request->get('udf2', 'invalid-token'), // the token setted during initialization is returned for additional check (optional)
                 'transactionReference' => $request->get('tranid'),   // transaction reference created by payment gateway
                 'transactionId'        => $request->get('trackid'),  // id created by merchant during authorization 
                 'cardtype'             => $request->get('cardtype'), // card type used by customer
@@ -35,17 +36,6 @@ class CompletePurchaseRequest extends AbstractRequest {
                 'returnUrl'            => $this->getReturnUrl()
             ];
         }
-        // token to match
-//        $token = $request->get('udf2');
-//        
-//        // invalid match
-//        if ( ($token !== null) && ($token != $this->getToken()) ) {
-//            return [
-//                'paymentId' => $paymentId,
-//                'code'      => 'token',
-//                'message'   => 'Initialization token not matching!'
-//            ];
-//        }
         
         // The PaymentId is initiated by gateway and returned with a post from purchase.
         $data['paymentId'] = $this->getPaymentId();
@@ -64,11 +54,6 @@ class CompletePurchaseRequest extends AbstractRequest {
     public function getPaymentId() {
         return $this->httpRequest->request->get('paymentid');
     }
-
-//
-//    public function setPaymentId($value) {
-//        return $this->setParameter('paymentId', $value);
-//    }
 
     /**
      * Send the the destination where to redirect customer to payment gateway
