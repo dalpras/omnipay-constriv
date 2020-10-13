@@ -1,6 +1,6 @@
-# Omnipay: constriv (Consorzio Triveneto Bassilichi)
+# Omnipay: constriv (NEXI Payments)
 
-**Consorzio Triveneto Bassilichi driver for the Omnipay PHP payment processing library**
+**NEXI Payments driver for the Omnipay PHP payment processing library**
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
