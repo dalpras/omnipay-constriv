@@ -15,11 +15,10 @@ class CompletePurchaseRequest extends AbstractRequest {
      * Get the data for this request.
      *
      * @throws InvalidRequestException
-     * @return string                  request data
+     * @return string request data
      */
     public function getData()
     {
-        $this->validate('merchantId', 'merchantPassword', 'returnUrl');
         $request = $this->httpRequest->request;
         
         // Error from payment gateway
